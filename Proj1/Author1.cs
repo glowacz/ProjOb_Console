@@ -9,10 +9,12 @@ namespace Proj1
     internal class Author1 : Author
     {
         static int n_authors = 0;
+        public static List<Author> authors = new List<Author>();
         int authorID { get; set; }
         public Author1(string name, string surname, int birthYear, int awards) : base(name, surname, birthYear, awards) 
         {
             this.authorID = ++n_authors;
+            authors.Add(this);
         }
     }
 }

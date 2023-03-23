@@ -37,7 +37,7 @@ namespace Proj1
             //sb.Append(surname);
             //sb.Append(birthYear);
             //sb.Append(awards);
-            return "Author:\n" + name + " " + surname + "\n" + birthYear + "\n" + awards + "\n";
+            return "Author: " + name + " " + surname + "\nBirth year: " + birthYear + "\nNumber of awards: " + awards + "\n";
             //return JsonConvert.SerializeObject(Author, Newtonsoft.Json.Formatting.Indented);
             //return base.ToString() + ": " + value.ToString();
         }

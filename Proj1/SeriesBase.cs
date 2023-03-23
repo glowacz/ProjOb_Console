@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 
 namespace Proj1
 {
+    interface Series
+    {
+        string ToString();
+    }
     internal class SeriesBase
     {
-        string title { get; set; }
-        string genre { get; set; }
+        protected string title { get; set; }
+        protected string genre { get; set; }
 
         //public SeriesB(string title, string genre, Author showrunner, List<Episode> episodes)
         public SeriesBase(string title, string genre)
