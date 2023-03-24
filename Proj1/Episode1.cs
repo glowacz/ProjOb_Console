@@ -9,7 +9,7 @@ namespace Proj1
 {
     internal class Episode1 //: Episode0
     {
-        public string title { get; set; }
+        public string title { set; }
         public int duration { get; set; }
         public int releaseYear { get; set; }
         public int directorID { get; set; }

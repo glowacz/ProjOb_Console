@@ -56,7 +56,7 @@ Series tous = new Series0("The Office US", "horror", gd, tous_episodes);
 //bb_1_episodes.Add(new Episode1("Ozymandias", 50, 2013, 4));
 //bb_1_episodes.Add(new Episode1("Pilot", 43, 2008, 3));
 
-//Series bb_1 = new Series1("Breaking Bad", "drama", 4, new List<int>{0, 1, 2});
+//Series bb_1 = new Series1("Breaking Bad", "drama", 4, new List<int> { 0, 1, 2 });
 
 
 ////Console.WriteLine(cmd);
