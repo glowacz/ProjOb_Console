@@ -6,38 +6,42 @@ using System.Threading.Tasks;
 
 namespace Proj1
 {
-    internal class Series1 : SeriesBase, Series
+    internal class Series1 //: SeriesBase, Series
     {
-        int showrunnerID { get; set; }
-        List<int> episodeIDs { get; set; }
+        public string title { get; set; }
+        public string genre { get; set; }
+        public int showrunnerID { get; set; }
+        public List<int> episodeIDs { get; set; }
 
-        public Series1(string title, string genre, int showrunnerID, List<int> episodeIDs) : base(title, genre)
+        public Series1(string title, string genre, int showrunnerID, List<int> episodeIDs) //: base(title, genre)
         {
+            this.title = title;
+            this.genre = genre;
             this.showrunnerID = showrunnerID;
             this.episodeIDs = new List<int>(episodeIDs);
         }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
+        //public override string ToString()
+        //{
+        //    StringBuilder sb = new StringBuilder();
 
-            sb.Append(title);
-            sb.Append("\n");
-            sb.Append(genre);
-            sb.Append("\n");
-            sb.Append(Author1.authors[showrunnerID]);
-            sb.Append("\nEpisodes:\n\n");
+        //    sb.Append(title);
+        //    sb.Append("\n");
+        //    sb.Append(genre);
+        //    sb.Append("\n");
+        //    sb.Append(Author1.authors[showrunnerID]);
+        //    sb.Append("\nEpisodes:\n\n");
 
-            int i = 0;
-            foreach (int episodeID in episodeIDs)
-            {
-                //sb.Append(new string[] { "1: ", episode.ToString() });
-                sb.Append($"{++i}: ");
-                sb.Append(Episode1.episodes[episodeID]);
-            }
+        //    int i = 0;
+        //    foreach (int episodeID in episodeIDs)
+        //    {
+        //        //sb.Append(new string[] { "1: ", episode.ToString() });
+        //        sb.Append($"{++i}: ");
+        //        sb.Append(Episode1.episodes[episodeID]);
+        //    }
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
 
         //public override string ToString()
         //{

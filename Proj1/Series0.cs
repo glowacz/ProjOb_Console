@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 
 namespace Proj1
 {
-    internal class Series0 : SeriesBase, Series
+    internal class Series0 : Series //: SeriesBase, Series
     {
+        string title { get; set; }
+        string genre { get; set; }
         Author showrunner { get; set; }
-        List<Episode0> episodes { get; set; }
+        protected List<Episode0> episodes { get; set; }
 
-        public Series0(string title, string genre, Author showrunner, List<Episode0> episodes) : base(title, genre)
+        public Series0(string title, string genre, Author showrunner, List<Episode0> episodes) // : base(title, genre)
         {
+            this.title = title;
+            this.genre = genre;
             this.showrunner = new Author(showrunner);
             this.episodes = new List<Episode0>(episodes);
         }
