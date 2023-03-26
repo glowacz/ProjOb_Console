@@ -11,14 +11,14 @@ namespace Proj1
     {
         string title { get; set; }
         string genre { get; set; }
-        Author showrunner { get; set; }
+        Author0 showrunner { get; set; }
         protected List<Episode0> episodes { get; set; }
 
-        public Series0(string title, string genre, Author showrunner, List<Episode0> episodes) // : base(title, genre)
+        public Series0(string title, string genre, Author0 showrunner, List<Episode0> episodes) // : base(title, genre)
         {
             this.title = title;
             this.genre = genre;
-            this.showrunner = new Author(showrunner);
+            this.showrunner = new Author0(showrunner);
             this.episodes = new List<Episode0>(episodes);
         }
 

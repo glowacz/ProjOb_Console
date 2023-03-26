@@ -12,15 +12,15 @@ namespace Proj1
         string genre { get; set; }
         int releaseYear { get; set; }
         int duration { get; set; }
-        Author director { get; set; }
+        Author0 director { get; set; }
 
-        public Movie0(string title, string genre, Author director, int duration, int releaseYear) //: base(title, genre, duration, releaseYear)
+        public Movie0(string title, string genre, Author0 director, int duration, int releaseYear) //: base(title, genre, duration, releaseYear)
         {
             this.title = title;
             this.genre = genre;
             this.releaseYear = releaseYear;
             this.duration = duration;
-            this.director = new Author(director);
+            this.director = new Author0(director);
         }
 
         public override string ToString()

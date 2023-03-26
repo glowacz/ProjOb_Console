@@ -7,14 +7,14 @@ using System.Text.Json;
 
 namespace Proj1
 {
-    internal class Author
+    internal class Author0
     {
         string name { get; set; }
         string surname { get; set; }
         int birthYear  { get; set; }
         int awards { get; set; }
 
-        public Author(string name, string surname, int birthYear, int awards)
+        public Author0(string name, string surname, int birthYear, int awards)
         {
             this.name = name;
             this.surname = surname;
@@ -22,7 +22,7 @@ namespace Proj1
             this.awards = awards;
         }
 
-        public Author(Author aut)
+        public Author0(Author0 aut)
         {
             this.name = aut.name;
             this.surname = aut.surname;

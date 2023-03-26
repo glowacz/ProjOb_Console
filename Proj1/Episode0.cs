@@ -16,14 +16,14 @@ namespace Proj1
         string title { get; set; }
         int duration { get; set; }
         int releaseYear { get; set; }
-        Author director { get; set; }
+        Author0 director { get; set; }
 
         //public Episode0(string title, int duration, int releaseYear, Author director) : base(title, duration, releaseYear)
         //{
         //    this.director = new Author(director);
         //}
 
-        public Episode0(string title, int duration, int releaseYear, Author director)
+        public Episode0(string title, int duration, int releaseYear, Author0 director)
         {
             this.title = title;
             this.duration = duration;
