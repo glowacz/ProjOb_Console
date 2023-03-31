@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Proj1
 {
-    internal class Author1 : Author
+    internal class Author1 : R0.Author0
     {
         static int n_authors = 0;
         public static List<Author1> authors = new List<Author1>();
