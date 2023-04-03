@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Proj1
-{   
+namespace Proj1.Legacy
+{
     internal static class General
     {
-        
 
-        
+
+
     }
 
 }
