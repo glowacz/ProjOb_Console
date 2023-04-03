@@ -37,12 +37,13 @@ Console.WriteLine("--------------------------------");
 Console.WriteLine(Algorithms.FindIf(l, f, false));
 Console.WriteLine("--------------------------------");
 Console.WriteLine(Algorithms.FindIf(v, f, true));
+Console.WriteLine("--------------------------------");
 
 //R0.Create();
 //R4.Create();
 
 //R0.Find(
-//    new List<R0.Episode0> { R0.bb1, R0.bb2, R0.bb3, R0.tous1, R0.tous2, R0.tous3 }, 
+//    new List<R0.Episode0> { R0.bb1, R0.bb2, R0.bb3, R0.tous1, R0.tous2, R0.tous3 },
 //    new List<R0.Movie0> { R0.an, R0.tgf, R0.rotla, R0.tgd });
 
 //Console.WriteLine("------------------------------");

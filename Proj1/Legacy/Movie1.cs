@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Proj1
+namespace Proj1.Legacy
 {
     internal class Movie1 // : MovieBase
     {
@@ -12,7 +12,7 @@ namespace Proj1
         public string genre { get; set; }
         public int releaseYear { get; set; }
         public int duration { get; set; }
-        public int directorID { get; set; } 
+        public int directorID { get; set; }
 
         public Movie1(string title, string genre, int directorID, int duration, int releaseYear) //: base(title, genre, duration, releaseYear)
         {

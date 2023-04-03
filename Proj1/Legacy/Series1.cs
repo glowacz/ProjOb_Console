@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Proj1
+namespace Proj1.Legacy
 {
     internal class Series1 //: SeriesBase, Series
     {

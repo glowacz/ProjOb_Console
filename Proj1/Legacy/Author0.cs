@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-namespace Proj1
+namespace Proj1.Legacy
 {
-    
+
 }

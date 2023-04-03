@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
+using Proj1.Legacy;
 using static Proj1.R0;
 
 namespace Proj1
