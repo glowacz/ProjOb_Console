@@ -2,22 +2,58 @@
 
 using Proj1;
 
-R0.Create();
-R4.Create();
+//MyList<R0.Author0> l = new MyList<R0.Author0>();
 
-R0.Find(
-    new List<R0.Episode0> { R0.bb1, R0.bb2, R0.bb3, R0.tous1, R0.tous2, R0.tous3 }, 
-    new List<R0.Movie0> { R0.an, R0.tgf, R0.rotla, R0.tgd });
+//l.AddLast(new R0.Author0("pio", "glo", 2002, 69));
 
-Console.WriteLine("------------------------------");
+//Iterator<R0.Author0> it = l.GetForwardIterator();
 
-//List <R0.Episode0> episodes = R4.EpisodeIDsToEpisode0(new List<int> { R4.bb1.episodeID, R4.bb2.episodeID,
-//   R4.bb3.episodeID, R4.tous1.episodeID, R4.tous2.episodeID, R4.tous3.episodeID });
-//List <R0.Movie0> movies = new List<R0.Movie0> { new R4.Movie4Adapter(R4.an), new R4.Movie4Adapter(R4.tgf),
-//     new R4.Movie4Adapter(R4.rotla),  new R4.Movie4Adapter(R4.tgd) };
+//Console.WriteLine(it.Val);
 
-R4.Find(new List<R4.Episode4> { R4.bb1, R4.bb2, R4.bb3, R4.tous1, R4.tous2, R4.tous3 },
-    new List<R4.Movie4> { R4.an, R4.tgf, R4.rotla, R4.tgd });
+MyList<int> l = new MyList<int>();
+l.AddLast(1);
+l.AddLast(2);
+l.AddLast(3);
+l.AddLast(4);
+l.AddLast(5);
+l.AddLast(6);
+
+Func<int, bool> f = n => n % 3 == 0;
+
+Algorithms.PrintIf(l, f, true);
+Console.WriteLine("--------------------------------");
+
+MyVector<int> v = new MyVector<int>();
+v.AddLast(1);
+v.AddLast(2);
+v.AddLast(3);
+v.AddLast(4);
+v.AddLast(5);
+v.AddLast(6);
+
+Algorithms.PrintIf(v, f, true);
+
+Console.WriteLine("--------------------------------");
+Console.WriteLine(Algorithms.FindIf(l, f, false));
+Console.WriteLine("--------------------------------");
+Console.WriteLine(Algorithms.FindIf(v, f, true));
+
+//R0.Create();
+//R4.Create();
+
+//R0.Find(
+//    new List<R0.Episode0> { R0.bb1, R0.bb2, R0.bb3, R0.tous1, R0.tous2, R0.tous3 }, 
+//    new List<R0.Movie0> { R0.an, R0.tgf, R0.rotla, R0.tgd });
+
+//Console.WriteLine("------------------------------");
+
+////List <R0.Episode0> episodes = R4.EpisodeIDsToEpisode0(new List<int> { R4.bb1.episodeID, R4.bb2.episodeID,
+////   R4.bb3.episodeID, R4.tous1.episodeID, R4.tous2.episodeID, R4.tous3.episodeID });
+////List <R0.Movie0> movies = new List<R0.Movie0> { new R4.Movie4Adapter(R4.an), new R4.Movie4Adapter(R4.tgf),
+////     new R4.Movie4Adapter(R4.rotla),  new R4.Movie4Adapter(R4.tgd) };
+
+//R4.Find(new List<R4.Episode4> { R4.bb1, R4.bb2, R4.bb3, R4.tous1, R4.tous2, R4.tous3 },
+//    new List<R4.Movie4> { R4.an, R4.tgf, R4.rotla, R4.tgd });
 
 //Console.WriteLine(R0.fc);
 //Console.WriteLine(new R4.Author4Adapter(R4.fc));
