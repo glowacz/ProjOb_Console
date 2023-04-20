@@ -1,43 +1,66 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Proj1;
+using System.ComponentModel;
 
-//MyList<R0.Author0> l = new MyList<R0.Author0>();
+Collection<int> c = new MyBinaryTree<int>();
 
-//l.AddLast(new R0.Author0("pio", "glo", 2002, 69));
+c.Add(1);
+c.Add(2);
+c.Add(3);
+c.Add(4);
+c.Add(5);
+c.Add(6);
+c.Add(7);
 
-//Iterator<R0.Author0> it = l.GetForwardIterator();
+Algorithms.PrintIf(c, (int x) => x > 0, true);
 
-//Console.WriteLine(it.Val);
+Iterator<int> it = c.GetReverseIterator();
 
-MyList<int> l = new MyList<int>();
-l.AddLast(1);
-l.AddLast(2);
-l.AddLast(3);
-l.AddLast(4);
-l.AddLast(5);
-l.AddLast(6);
+it = it.Next();
+it = it.Next();
 
-Func<int, bool> f = n => n % 3 == 0;
+c.Remove(it);
 
-Algorithms.PrintIf(l, f, true);
-Console.WriteLine("--------------------------------");
+Console.WriteLine("------------------------------");
 
-MyVector<int> v = new MyVector<int>();
-v.AddLast(1);
-v.AddLast(2);
-v.AddLast(3);
-v.AddLast(4);
-v.AddLast(5);
-v.AddLast(6);
+Algorithms.PrintIf(c, (int x) => x > 0, true);
 
-Algorithms.PrintIf(v, f, true);
+Console.WriteLine("------------------------------");
 
-Console.WriteLine("--------------------------------");
-Console.WriteLine(Algorithms.FindIf(l, f, false));
-Console.WriteLine("--------------------------------");
-Console.WriteLine(Algorithms.FindIf(v, f, true));
-Console.WriteLine("--------------------------------");
+Algorithms.ForEach(c.GetForwardIterator(), (int x) => { Console.WriteLine(x); });
+
+
+//MyList<int> l = new MyList<int>();
+//l.AddLast(1);
+//l.AddLast(2);
+//l.AddLast(3);
+//l.AddLast(4);
+//l.AddLast(5);
+//l.AddLast(6);
+
+//Func<int, bool> f = n => n % 3 == 0;
+
+//Algorithms.PrintIf(l, f, true);
+//Console.WriteLine("--------------------------------");
+
+//MyVector<int> v = new MyVector<int>();
+//v.AddLast(1);
+//v.AddLast(2);
+//v.AddLast(3);
+//v.AddLast(4);
+//v.AddLast(5);
+//v.AddLast(6);
+
+//Algorithms.PrintIf(v, f, true);
+
+//Console.WriteLine("--------------------------------");
+//Console.WriteLine(Algorithms.FindIf(l, f, false));
+//Console.WriteLine("--------------------------------");
+//Console.WriteLine(Algorithms.FindIf(v, f, true));
+//Console.WriteLine("--------------------------------");
+
+//System.Collections.Generic.List
 
 //R0.Create();
 //R4.Create();
