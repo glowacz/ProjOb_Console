@@ -3,32 +3,39 @@
 using Proj1;
 using System.ComponentModel;
 
-Collection<int> c = new MyBinaryTree<int>();
+R0.Create();
+R4.Create();
 
-c.Add(1);
-c.Add(2);
-c.Add(3);
-c.Add(4);
-c.Add(5);
-c.Add(6);
-c.Add(7);
 
-Algorithms.PrintIf(c, (int x) => x > 0, true);
+CommandMain.Init();
+CommandMain.Main();
 
-Iterator<int> it = c.GetReverseIterator();
+//Collection<int> c = new MyBinaryTree<int>();
 
-it = it.Next();
-it = it.Next();
+//c.Add(1);
+//c.Add(2);
+//c.Add(3);
+//c.Add(4);
+//c.Add(5);
+//c.Add(6);
+//c.Add(7);
 
-c.Remove(it);
+//Algorithms.PrintIf(c, (int x) => x > 0, true);
 
-Console.WriteLine("------------------------------");
+//Iterator<int> it = c.GetReverseIterator();
 
-Algorithms.PrintIf(c, (int x) => x > 0, true);
+//it = it.Next();
+//it = it.Next();
 
-Console.WriteLine("------------------------------");
+//c.Remove(it);
 
-Algorithms.ForEach(c.GetForwardIterator(), (int x) => { Console.WriteLine(x); });
+//Console.WriteLine("------------------------------");
+
+//Algorithms.PrintIf(c, (int x) => x > 0, true);
+
+//Console.WriteLine("------------------------------");
+
+//Algorithms.ForEach(c.GetForwardIterator(), (int x) => { Console.WriteLine(x); });
 
 
 //MyList<int> l = new MyList<int>();

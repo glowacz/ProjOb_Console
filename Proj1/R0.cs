@@ -76,7 +76,8 @@ namespace Proj1
 
             public override string ToString()
             {
-                return title + "\n" + duration + "\n" + releaseYear + "\n" + director + "\n";
+                //return title + "\n" + duration + "\n" + releaseYear + "\n" + director + "\n";
+                return "Episode:\nTitle: " + title + "\nDuration: " + duration + " min\nRelease year: " + releaseYear + "\n";
             }
         }
 
@@ -97,25 +98,26 @@ namespace Proj1
 
             public override string ToString()
             {
-                StringBuilder sb = new StringBuilder();
-                //sb.Append(new string[] { title, "\n", genre, "\n", showrunner.ToString(), "\n" });
+                //StringBuilder sb = new StringBuilder();
+                ////sb.Append(new string[] { title, "\n", genre, "\n", showrunner.ToString(), "\n" });
 
-                sb.Append(title);
-                sb.Append("\n");
-                sb.Append(genre);
-                sb.Append("\n");
-                sb.Append(showrunner);
-                sb.Append("\nEpisodes:\n\n");
+                //sb.Append(title);
+                //sb.Append("\n");
+                //sb.Append(genre);
+                ////sb.Append("\n");
+                ////sb.Append(showrunner);
+                ////sb.Append("\nEpisodes:\n\n");
 
-                int i = 0;
-                foreach (var episode in episodes)
-                {
-                    //sb.Append(new string[] { "1: ", episode.ToString() });
-                    sb.Append($"{++i}: ");
-                    sb.Append(episode);
-                }
+                ////int i = 0;
+                ////foreach (var episode in episodes)
+                ////{
+                ////    //sb.Append(new string[] { "1: ", episode.ToString() });
+                ////    sb.Append($"{++i}: ");
+                ////    sb.Append(episode);
+                ////}
 
-                return sb.ToString();
+                //return sb.ToString();
+                return $"Series:\nTitle: {title}\nGenre: {genre}\n";
             }
         }
 
@@ -148,8 +150,9 @@ namespace Proj1
                 sb.Append(releaseYear);
                 sb.Append("\n");
                 sb.Append(duration);
-                sb.Append("\nDirector:\n");
-                sb.Append(director);
+                sb.Append("\n");
+                //sb.Append("\nDirector:\n");
+                //sb.Append(director);
 
                 return sb.ToString();
             }
