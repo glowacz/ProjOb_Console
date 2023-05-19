@@ -100,7 +100,8 @@ namespace Proj1
             public override string ToString()
             {
                 //return title + "\n" + duration + "\n" + releaseYear + "\n" + director + "\n";
-                return "Episode:\nTitle: " + title + "\nDuration: " + duration + " min\nRelease year: " + releaseYear + "\n";
+                //return "Episode:\nTitle: " + title + "\nDuration: " + duration + " min\nRelease year: " + releaseYear + "\n";
+                return "Title: " + title + "\nDuration: " + duration + " min\nRelease year: " + releaseYear + "\n";
             }
         }
 
@@ -146,7 +147,8 @@ namespace Proj1
                 ////}
 
                 //return sb.ToString();
-                return $"Series:\nTitle: {title}\nGenre: {genre}\n";
+                //return $"Series:\nTitle: {title}\nGenre: {genre}\n";
+                return $"Title: {title}\nGenre: {genre}\n";
             }
         }
 
@@ -189,7 +191,8 @@ namespace Proj1
                 //sb.Append("\nDirector:\n");
                 //sb.Append(director);
 
-                return sb.ToString();
+                //return sb.ToString();
+                return $"Title: {title}\nGenre: {genre}\nRelease year: {releaseYear}\nDuration {duration} min\n";
             }
         }
 

@@ -32,19 +32,29 @@ namespace Proj1
 
         public static void create_collection()
         {
-            //col.Add((R0.fc, "author", "base"));
-            //col.Add((R0.ss, "author", "base"));
-            //col.Add((R0.cc, "author", "base"));
-            //col.Add((R0.vg, "author", "base"));
-            //col.Add((R0.rj, "author", "base"));
-            //col.Add((R0.gd, "author", "base"));
-            //col.Add((R0.tm, "author", "base"));
-            //col.Add((R0.vnj, "author", "base"));
-            //col.Add((R0.cmd, "author", "base"));
+            col.Add((R0.fc, "author", "base"));
+            col.Add((R0.ss, "author", "base"));
+            col.Add((R0.cc, "author", "base"));
+            col.Add((R0.vg, "author", "base"));
+            col.Add((R0.rj, "author", "base"));
+            col.Add((R0.gd, "author", "base"));
+            col.Add((R0.tm, "author", "base"));
+            col.Add((R0.vnj, "author", "base"));
+            col.Add((R0.cmd, "author", "base"));
+
+            col.Add((R0.bb1, "episode", "base"));
+            col.Add((R0.bb2, "episode", "base"));
+            col.Add((R0.bb3, "episode", "base"));
+            col.Add((R0.tous1, "episode", "base"));
+            col.Add((R0.tous2, "episode", "base"));
+            col.Add((R0.tous3, "episode", "base"));
+
+            col.Add((R0.bb, "series", "base"));
+            col.Add((R0.tous, "series", "base"));
 
             //col.Add((R0.bb, "series", "base"));
             //col.Add((R0.tous, "series", "base"));
-            
+
             //col.Add((R4.cmd, "author"));
             //col.Add((R4.fc, "author"));
 
@@ -131,6 +141,12 @@ namespace Proj1
         public void Execute(string[] parameters)
         {
             string requested_type = parameters[1];
+            if(!CommandMain.fields.ContainsKey(requested_type))
+            {
+                Console.WriteLine("Invalid type name!!!");
+                return;
+            }
+
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(), 
                 ((object ob, string type, string representation) a) => 
                 {
@@ -181,15 +197,23 @@ namespace Proj1
         public void Execute(string[] parameters)
         {
             string requested_type = parameters[1];
+
+            bool br = false;
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(),
                 ((object ob, string type, string representation) a) =>
                 {
+                    if (br)
+                        return;
                     if (a.type == requested_type)
                     {
                         for(int i = 2; i < parameters.Length; i++)
                         {
                             (bool success, string field, char cmp, string value) = parse_requirement(parameters[i]);
-                            if (!success) return;
+                            if (!success)
+                            {
+                                br = true;
+                                return;
+                            }
                             
                             //if(!a.ob.get_field_values().ContainsKey(field))
                             //{
@@ -200,6 +224,7 @@ namespace Proj1
                             if (!CommandMain.fields[a.type].Contains(field))
                             {
                                 Console.WriteLine("Invalid field name!!!");
+                                br = true;
                                 return;
                             }
 
@@ -335,7 +360,7 @@ namespace Proj1
                     (int) field_values["birthYear"], (int) field_values["awards"]), "author", "base"));
                 else
                     CommandMain.col.Add((new R4.Author4((string)field_values["name"], (string)field_values["surname"],
-                        (int)field_values["birthYear"], (int)field_values["awards"]), "author", "base"));
+                        (int)field_values["birthYear"], (int)field_values["awards"]), "author", "secondary"));
             }
             else if (type == "episode")
             {
@@ -344,7 +369,7 @@ namespace Proj1
                     (int)field_values["releaseYear"], R0.fc), "episode", "base"));
                 else
                     CommandMain.col.Add((new R4.Episode4((string)field_values["title"], (int)field_values["duration"],
-                    (int)field_values["releaseYear"], -1), "episode", "base"));
+                    (int)field_values["releaseYear"], -1), "episode", "secondary"));
             }
             else if (type == "series")
             {
@@ -353,7 +378,7 @@ namespace Proj1
                     R0.fc, new List<Episode0>()), "series", "base"));
                 else
                     CommandMain.col.Add((new R4.Series4((string)field_values["title"], (string)field_values["genre"],
-                    -1, new List<int>()), "series", "base"));
+                    -1, new List<int>()), "series", "secondary"));
             }
             else if (type == "movie")
             {
@@ -362,7 +387,7 @@ namespace Proj1
                     (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "base"));
                 else
                     CommandMain.col.Add((new R4.Movie4((string)field_values["title"], (string)field_values["genre"], -1,
-                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "base"));
+                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "secondary"));
             }
         }
         public void Execute(string[] parameters)
@@ -382,7 +407,7 @@ namespace Proj1
 
             if (repr != "base" && repr != "secondary")
             {
-                Console.WriteLine("Correct value third is base OR secondary");
+                Console.WriteLine("Correct value of the 3rd parameter is base OR secondary");
                 return;
             }
 
