@@ -23,7 +23,7 @@ namespace Proj1
 
     static class CommandMain
     {
-        public static Collection<(object?, string)> col = new MyVector<(object?, string)>();
+        public static Collection<(R0.Type?, string)> col = new MyVector<(R0.Type?, string)>();
         public static Dictionary<string, Command> commands = new Dictionary<string, Command>();
         public static Dictionary<string, string[]> fields = new Dictionary<string, string[]>();
         public static Dictionary<(string, string), object> default_values = new Dictionary<(string, string), object>();
@@ -35,16 +35,18 @@ namespace Proj1
             col.Add((R0.cmd, "author"));
             col.Add((R0.fc, "author"));
             col.Add((R0.ss, "author"));
-            col.Add((R4.cmd, "author"));
-            col.Add((R4.fc, "author"));
             col.Add((R0.bb, "series"));
-            col.Add((R4.bb, "series"));
+            //col.Add((R4.cmd, "author"));
+            //col.Add((R4.fc, "author"));
+            
+            //col.Add((R4.bb, "series"));
         }
 
         public static void add_commands()
         {
             commands.Add("exit", new Exit());
             commands.Add("list", new List());
+            commands.Add("find", new Find());
             commands.Add("add", new Add());
         }
 
@@ -63,17 +65,17 @@ namespace Proj1
             fields.Add("movie", movie_fields);
         }
 
-        public static void set_defaults()
-        {
-            default_values.Add(("author", "name"), "");
-        }
+        //public static void set_defaults()
+        //{
+        //    default_values.Add(("author", "name"), "");
+        //}
 
         public static void Init()
         {
             CommandMain.create_collection();
             CommandMain.add_commands();
             CommandMain.add_fields();
-            CommandMain.set_defaults();
+            //CommandMain.set_defaults();
         }
 
         public static void Main()
@@ -113,7 +115,7 @@ namespace Proj1
         {
             string requested_type = parameters[1];
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(), 
-                ((object ob, string type) a) => 
+                ((R0.Type ob, string type) a) => 
                 { 
                     if(a.type == requested_type)
                         Console.WriteLine(a.ob); 
@@ -123,9 +125,110 @@ namespace Proj1
 
     class Find : Command
     {
+        (bool, string field, char cmp, string value) parse_requirement(string requirement)
+        {
+            int cnt = requirement.Count((char c) => (c == '=' || c == '<' || c == '>'));
+            if (cnt == 0)
+            {
+                Console.WriteLine("A requirment should feature a comparison operator!!!");
+                return (false, "", '!', "");
+            }
+            else if (cnt > 1)
+            {
+                Console.WriteLine("A requirment shouldn't feature more than one comparison operators!!!");
+                return (false, "", '!', "");
+            }
+
+            if(requirement.Contains('='))
+            {
+                string[] strings = requirement.Split('=');
+                return (true, strings[0], '=', strings[1]);
+            }
+            if (requirement.Contains('<'))
+            {
+                string[] strings = requirement.Split('<');
+                return (true, strings[0], '<', strings[1]);
+            }
+            else
+            {
+                string[] strings = requirement.Split('>');
+                return (true, strings[0], '>', strings[1]);
+            }
+        }
         public void Execute(string[] parameters)
         {
+            string requested_type = parameters[1];
+            Algorithms.ForEach(CommandMain.col.GetForwardIterator(),
+                ((R0.Type ob, string type) a) =>
+                {
+                    if (a.type == requested_type)
+                    {
+                        for(int i = 2; i < parameters.Length; i++)
+                        {
+                            (bool success, string field, char cmp, string value) = parse_requirement(parameters[i]);
+                            if (!success) return;
+                            
+                            //if(!a.ob.get_field_values().ContainsKey(field))
+                            //{
+                            //    Console.WriteLine("Invalid field name!!!");
+                            //    return;
+                            //}
 
+                            if (!CommandMain.fields[a.type].Contains(field))
+                            {
+                                Console.WriteLine("Invalid field name!!!");
+                                return;
+                            }
+
+                            Dictionary<string, object> field_values = a.ob.get_field_values();
+
+                            if (field == "duration" || field == "releaseYear" || field == "birthYear" || field == "awards")
+                            {
+                                if (int.TryParse(value, out int n))
+                                {
+                                    if (cmp == '=' && !((int)field_values[field] == n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        return;
+                                    }
+                                    if (cmp == '<' && !((int)field_values[field] < n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        return;
+                                    }
+                                    if (cmp == '>' && !((int)field_values[field] > n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("The value should be a valid integer");
+                                }
+                            }
+                            else
+                            {
+                                if (cmp == '=' && !((string)field_values[field] == value))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    return;
+                                }
+                                if (cmp == '<' && !(string.Compare((string)field_values[field], value) == -1 ))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    return;
+                                }
+                                if (cmp == '>' && !(string.Compare((string)field_values[field], value) == 1))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    return;
+                                }
+                            }
+                        }
+                        Console.WriteLine(a.ob);
+                    }
+                });
         }
     }
 

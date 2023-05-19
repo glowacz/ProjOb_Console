@@ -9,23 +9,37 @@ namespace Proj1
 {
     static class R0
     {
+        public interface Type
+        {
+            Dictionary<string, object> get_field_values();
+        }
         public static Author0? fc, ss, cc, vg, rj, gd, tm, vnj, cmd;
         public static Movie0? an, tgf, rotla, tgd;
         public static Episode0? bb1, bb2, bb3, tous1, tous2, tous3;
         public static Series0? bb, tous;
-        internal class Author0
+        internal class Author0 : Type
         {
             public string name { get; set; }
             public string surname { get; set; }
             public int birthYear { get; set; }
             public int awards { get; set; }
 
+            public Dictionary<string, object> field_values = new Dictionary<string, object>();
+
+            public Dictionary<string, object> get_field_values()
+            {
+                return field_values;
+            }
+
             public Author0(string name, string surname, int birthYear, int awards)
             {
-                this.name = name;
-                this.surname = surname;
-                this.birthYear = birthYear;
-                this.awards = awards;
+                //field_values.Add("type", "author");
+                //field_values.Add("representation", "base");
+
+                this.name = name; field_values.Add("name", name);
+                this.surname = surname; field_values.Add("surname", surname);
+                this.birthYear = birthYear; field_values.Add("birthYear", birthYear);
+                this.awards = awards; field_values.Add("awards", awards);
             }
 
             public Author0(Author0 aut)
@@ -34,6 +48,7 @@ namespace Proj1
                 this.surname = aut.surname;
                 this.birthYear = aut.birthYear;
                 this.awards = aut.awards;
+                this.field_values = aut.field_values;
             }
 
             public override string ToString()
@@ -49,7 +64,7 @@ namespace Proj1
             }
         }
 
-        internal class Episode0 //: Episode
+        internal class Episode0 : Type//: Episode
         {
             //public string title { get; private set; }
             //public int duration { get; private set; }
@@ -61,6 +76,12 @@ namespace Proj1
             public int releaseYear { get; set; }
             public Author0 director { get; set; }
 
+            public Dictionary<string, object> field_values = new Dictionary<string, object>();
+            public Dictionary<string, object> get_field_values()
+            {
+                return field_values;
+            }
+
             //public Episode0(string title, int duration, int releaseYear, Author director) : base(title, duration, releaseYear)
             //{
             //    this.director = new Author(director);
@@ -68,9 +89,9 @@ namespace Proj1
 
             public Episode0(string title, int duration, int releaseYear, Author0 director)
             {
-                this.title = title;
-                this.duration = duration;
-                this.releaseYear = releaseYear;
+                this.title = title; field_values.Add("title", title);
+                this.duration = duration; field_values.Add("duration", duration);
+                this.releaseYear = releaseYear; field_values.Add("releaseYear", releaseYear);
                 this.director = director;
             }
 
@@ -81,17 +102,23 @@ namespace Proj1
             }
         }
 
-        internal class Series0 //: Series //: SeriesBase, Series
+        internal class Series0 : Type //: Series //: SeriesBase, Series
         {
             public string title { get; set; }
             public string genre { get; set; }
             public Author0 showrunner { get; set; }
             public List<Episode0> episodes { get; set; }
 
+            public Dictionary<string, object> field_values = new Dictionary<string, object>();
+            public Dictionary<string, object> get_field_values()
+            {
+                return field_values;
+            }
+
             public Series0(string title, string genre, Author0 showrunner, List<Episode0> episodes) // : base(title, genre)
             {
-                this.title = title;
-                this.genre = genre;
+                this.title = title; field_values.Add("title", title);
+                this.genre = genre; field_values.Add("genre", genre);
                 this.showrunner = new Author0(showrunner);
                 this.episodes = new List<Episode0>(episodes);
             }
@@ -121,7 +148,7 @@ namespace Proj1
             }
         }
 
-        internal class Movie0 : Movie //: MovieBase
+        internal class Movie0 : Movie, Type //: MovieBase
         {
             public string title { get; set; }
             public string genre { get; set; }
@@ -129,12 +156,18 @@ namespace Proj1
             public int duration { get; set; }
             public Author0 director { get; set; }
 
+            public Dictionary<string, object> field_values = new Dictionary<string, object>();
+            public Dictionary<string, object> get_field_values()
+            {
+                return field_values;
+            }
+
             public Movie0(string title, string genre, Author0 director, int duration, int releaseYear) //: base(title, genre, duration, releaseYear)
             {
-                this.title = title;
-                this.genre = genre;
-                this.releaseYear = releaseYear;
-                this.duration = duration;
+                this.title = title; field_values.Add("title", title);
+                this.genre = genre; field_values.Add("genre", genre);
+                this.releaseYear = releaseYear; field_values.Add("releaseYear", releaseYear);
+                this.duration = duration; field_values.Add("duration", duration);
                 this.director = new Author0(director);
             }
 
