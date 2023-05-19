@@ -12,6 +12,8 @@ namespace Proj1
         public interface Type
         {
             Dictionary<string, object> get_field_values();
+
+            string ToString();
         }
         public static Author0? fc, ss, cc, vg, rj, gd, tm, vnj, cmd;
         public static Movie0? an, tgf, rotla, tgd;

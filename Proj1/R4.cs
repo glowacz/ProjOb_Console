@@ -135,6 +135,41 @@ namespace Proj1
             }
         }
 
+        internal class Adapter : R0.Type
+        {
+            R0.Type type;
+            //R0.Author0 type;
+            public Adapter(string type, object ob) 
+            { 
+                switch (type)
+                {
+                    case "author":
+                        this.type = (R0.Author0) new R4.Author4Adapter((R4.Author4)ob);
+                        break;
+                    case "episode":
+                        this.type = new R4.Episode4Adapter((R4.Episode4)ob);
+                        break;
+                    case "series":
+                        this.type = new R4.Series4Adapter((R4.Series4)ob);
+                        break;
+                    case "movie":
+                        this.type = new R4.Movie4Adapter((R4.Movie4)ob);
+                        break;
+                    default: throw new ArgumentException();
+                }
+            }
+
+            public override string ToString()
+            {
+                return type.ToString();
+            }
+
+            public Dictionary<string, object> get_field_values()
+            {
+                return type.get_field_values();
+            }
+        }
+
         internal class Author4Adapter : R0.Author0
         {
             Author4 aut;
@@ -142,6 +177,11 @@ namespace Proj1
                 Author4.mapi[aut.birthYearKey], Author4.mapi[aut.awardsKey])
             {
                 this.aut = aut;
+            }
+
+            public override string ToString()
+            {
+                return base.ToString();
             }
         }
 
@@ -152,16 +192,25 @@ namespace Proj1
             {
                 this.ep = ep;
             }
+            public string ToString()
+            {
+                return base.ToString();
+            }
         }
 
         internal class Series4Adapter : R0.Series0
         {
-            Series1 s;
+            R4.Series4 s;
 
-            public Series4Adapter(Series1 s) : base(s.title, s.genre, new Author4Adapter(Author4.authors[s.showrunnerID]), new List<R0.Episode0>())
+            //public Series4Adapter(Series1 s) : base(s.title, s.genre, new Author4Adapter(Author4.authors[s.showrunnerID]), new List<R0.Episode0>())
+            public Series4Adapter(R4.Series4 s) : base(Series4.map[s.titleKey], Series4.map[s.genreKey], new Author4Adapter(Author4.authors[s.showrunnerID]), new List<R0.Episode0>())
             {
                 this.episodes = EpisodeIDsToEpisode0(s.episodeIDs);
                 this.s = s;
+            }
+            public string ToString()
+            {
+                return base.ToString();
             }
         }
 
@@ -173,6 +222,10 @@ namespace Proj1
                 new Author4Adapter(Author4.authors[m.directorID]), Movie4.mapi[m.durationKey], Movie4.mapi[m.releaseYearKey])
             {
                 this.m = m;
+            }
+            public string ToString()
+            {
+                return base.ToString();
             }
         }
 

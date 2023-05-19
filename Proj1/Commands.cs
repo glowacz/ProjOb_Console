@@ -23,7 +23,7 @@ namespace Proj1
 
     static class CommandMain
     {
-        public static Collection<(R0.Type?, string)> col = new MyVector<(R0.Type?, string)>();
+        public static Collection<(object, string, string)> col = new MyVector<(object, string, string)>();
         public static Dictionary<string, Command> commands = new Dictionary<string, Command>();
         public static Dictionary<string, string[]> fields = new Dictionary<string, string[]>();
         public static Dictionary<(string, string), object> default_values = new Dictionary<(string, string), object>();
@@ -32,14 +32,31 @@ namespace Proj1
 
         public static void create_collection()
         {
-            col.Add((R0.cmd, "author"));
-            col.Add((R0.fc, "author"));
-            col.Add((R0.ss, "author"));
-            col.Add((R0.bb, "series"));
+            //col.Add((R0.fc, "author", "base"));
+            //col.Add((R0.ss, "author", "base"));
+            //col.Add((R0.cc, "author", "base"));
+            //col.Add((R0.vg, "author", "base"));
+            //col.Add((R0.rj, "author", "base"));
+            //col.Add((R0.gd, "author", "base"));
+            //col.Add((R0.tm, "author", "base"));
+            //col.Add((R0.vnj, "author", "base"));
+            //col.Add((R0.cmd, "author", "base"));
+
+            //col.Add((R0.bb, "series", "base"));
+            //col.Add((R0.tous, "series", "base"));
+            
             //col.Add((R4.cmd, "author"));
             //col.Add((R4.fc, "author"));
+
+            col.Add((R4.fc, "author", "secondary"));
             
-            //col.Add((R4.bb, "series"));
+            col.Add((R4.bb, "series", "secondary"));
+            col.Add((R4.tous, "series", "secondary"));
+
+            col.Add((R4.an, "movie", "secondary"));
+            col.Add((R4.tgf, "movie", "secondary"));
+            col.Add((R4.rotla, "movie", "secondary"));
+            col.Add((R4.tgd, "movie", "secondary"));
         }
 
         public static void add_commands()
@@ -115,10 +132,16 @@ namespace Proj1
         {
             string requested_type = parameters[1];
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(), 
-                ((R0.Type ob, string type) a) => 
-                { 
-                    if(a.type == requested_type)
-                        Console.WriteLine(a.ob); 
+                ((object ob, string type, string representation) a) => 
+                {
+                    if (a.type == requested_type)
+                    {
+                        R0.Type type = a.representation == "base" ? (R0.Type)a.ob : new R4.Adapter(a.type, a.ob);
+                        //Console.WriteLine(a.ob);
+                        Console.WriteLine(type);
+                        //Console.WriteLine((new R4.Adapter(a.type, a.ob)).ToString());
+                        //Console.WriteLine(type.ToString());
+                    }
                 });
         }
     }
@@ -159,7 +182,7 @@ namespace Proj1
         {
             string requested_type = parameters[1];
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(),
-                ((R0.Type ob, string type) a) =>
+                ((object ob, string type, string representation) a) =>
                 {
                     if (a.type == requested_type)
                     {
@@ -180,7 +203,12 @@ namespace Proj1
                                 return;
                             }
 
-                            Dictionary<string, object> field_values = a.ob.get_field_values();
+                            //a.ob = (R0.Type) a.ob;
+                            //R0.Type type = a.representation == "base" ? (R0.Type)a.ob : new R4.Author4Adapter((R4.Author4)a.ob);
+                            R0.Type type = a.representation == "base" ? (R0.Type)a.ob : new R4.Adapter(a.type, a.ob);
+
+                            //Dictionary<string, object> field_values = a.ob.get_field_values();
+                            Dictionary<string, object> field_values = type.get_field_values();
 
                             if (field == "duration" || field == "releaseYear" || field == "birthYear" || field == "awards")
                             {
@@ -226,7 +254,8 @@ namespace Proj1
                                 }
                             }
                         }
-                        Console.WriteLine(a.ob);
+                        R0.Type ob = a.representation == "base" ? (R0.Type)a.ob : new R4.Adapter(a.type, a.ob);
+                        Console.WriteLine(ob);
                     }
                 });
         }
@@ -301,23 +330,39 @@ namespace Proj1
         {
             if(type == "author")
             {
-                CommandMain.col.Add((new R0.Author0((string) field_values["name"], (string) field_values["surname"], 
-                    (int) field_values["birthYear"], (int) field_values["awards"]), "author"));
+                if(repr == "base")
+                    CommandMain.col.Add((new R0.Author0((string) field_values["name"], (string) field_values["surname"], 
+                    (int) field_values["birthYear"], (int) field_values["awards"]), "author", "base"));
+                else
+                    CommandMain.col.Add((new R4.Author4((string)field_values["name"], (string)field_values["surname"],
+                        (int)field_values["birthYear"], (int)field_values["awards"]), "author", "base"));
             }
             else if (type == "episode")
             {
-                CommandMain.col.Add((new R0.Episode0((string)field_values["title"], (int)field_values["duration"], 
-                    (int)field_values["releaseYear"], R0.fc), "episode"));
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Episode0((string)field_values["title"], (int)field_values["duration"], 
+                    (int)field_values["releaseYear"], R0.fc), "episode", "base"));
+                else
+                    CommandMain.col.Add((new R4.Episode4((string)field_values["title"], (int)field_values["duration"],
+                    (int)field_values["releaseYear"], -1), "episode", "base"));
             }
             else if (type == "series")
             {
-                CommandMain.col.Add((new R0.Series0((string)field_values["title"], (string)field_values["genre"], 
-                    R0.fc, new List<Episode0>()), "series"));
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Series0((string)field_values["title"], (string)field_values["genre"], 
+                    R0.fc, new List<Episode0>()), "series", "base"));
+                else
+                    CommandMain.col.Add((new R4.Series4((string)field_values["title"], (string)field_values["genre"],
+                    -1, new List<int>()), "series", "base"));
             }
             else if (type == "movie")
             {
-                CommandMain.col.Add((new R0.Movie0((string)field_values["title"], (string)field_values["genre"], R0.fc, 
-                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie"));
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Movie0((string)field_values["title"], (string)field_values["genre"], R0.fc, 
+                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "base"));
+                else
+                    CommandMain.col.Add((new R4.Movie4((string)field_values["title"], (string)field_values["genre"], -1,
+                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "base"));
             }
         }
         public void Execute(string[] parameters)
