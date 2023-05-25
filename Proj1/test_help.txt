@@ -1,0 +1,5 @@
+list movie
+add episode secondary
+find author name>P awards=0
+list author
+queue export a.xml

@@ -1,34 +1,46 @@
-﻿using System;
+﻿using Proj1;
+using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Xml;
+using System.Xml.Serialization;
 using static Proj1.R0;
 
 namespace Proj1
 {
-    //class Command
-    //{
-    //    string[] parameters { get; set; }
+    public class CommandQueueWrapper
+    {
+        public Queue<Command> Commands;
 
-    //    public Command(string[] parameters)
-    //    {
-    //        this.parameters = parameters;
-    //    }
+        // Parameterless constructor required for XML serialization
+        public CommandQueueWrapper()
+        {
+            Commands = new Queue<Command>();
+        }
 
-
-    //    //void Execute(string[] parameters);
-    //}
-
+        public CommandQueueWrapper(Queue<Command> commands)
+        {
+            Commands = commands;
+        }
+    }
     static class CommandMain
     {
         public static Collection<(object, string, string)> col = new MyVector<(object, string, string)>();
         public static Dictionary<string, Command> commands = new Dictionary<string, Command>();
         public static Dictionary<string, string[]> fields = new Dictionary<string, string[]>();
         public static Dictionary<(string, string), object> default_values = new Dictionary<(string, string), object>();
-        public static string? full_command, command_name;
-        public static string?[] command_args;
+        //public static string? full_command, command_name;
+        //public static Queue<Command> q = new Queue<Command>();
+        //public static CommandQueueWrapper q = new CommandQueueWrapper();
+        public static List<Command> q = new List<Command>();
+        //public static List<object> q = new List<object>();
 
         public static void create_collection()
         {
@@ -69,13 +81,13 @@ namespace Proj1
             col.Add((R4.tgd, "movie", "secondary"));
         }
 
-        public static void add_commands()
-        {
-            commands.Add("exit", new Exit());
-            commands.Add("list", new List());
-            commands.Add("find", new Find());
-            commands.Add("add", new Add());
-        }
+        //public static void add_commands()
+        //{
+        //    commands.Add("exit", new Exit());
+        //    commands.Add("list", new List());
+        //    commands.Add("find", new Find());
+        //    commands.Add("add", new Add());
+        //}
 
         public static void add_fields()
         {
@@ -100,7 +112,7 @@ namespace Proj1
         public static void Init()
         {
             CommandMain.create_collection();
-            CommandMain.add_commands();
+            //CommandMain.add_commands();
             CommandMain.add_fields();
             //CommandMain.set_defaults();
         }
@@ -109,36 +121,188 @@ namespace Proj1
         {
             while (true)
             {
-                full_command = Console.ReadLine();
-                command_args = full_command.Split(' ');
-                command_name = command_args[0];
+                string full_command = Console.ReadLine();
+                string?[] command_args; command_args = full_command.Split(' ');
+                StringBuilder sb = new StringBuilder();
+                sb.Append("Proj1.");
+                sb.Append(Char.ToUpper(command_args[0][0]));
+                sb.Append(command_args[0].Substring(1));
+                string command_class = sb.ToString();
 
-                if (!commands.ContainsKey(command_name))
+                //command_name = Char.ToUpper(command_args[0][0]) + command_args[0].Substring(1);
+                //command_name[0] = ;
+
+                //if (!commands.ContainsKey(command_name))
+                //{
+                //    Console.WriteLine("No such command exists!!!");
+                //    continue;
+                //}
+
+                if (command_class == "Proj1.Exit" || command_class == "Proj1.Queue")
                 {
-                    Console.WriteLine("No such command exists!!!");
-                    continue;
-                }
+                    System.Type? type = System.Type.GetType(command_class);
+                    //Command com = (Command)Activator.CreateInstance(type, new object[] { command_class, command_args });
+                    Command com = (Command)Activator.CreateInstance(type, command_class, command_args);
+                    //Exit com = (Exit)Activator.CreateInstance(typeof(Exit), command_name, command_args);
+                    //Test com = (Test) Activator.CreateInstance(typeof(Test), 69);
 
-                commands[command_name].Execute(command_args);
+                    com.Execute();
+                }
+                else
+                {
+                    System.Type? type = System.Type.GetType(command_class);
+
+                    if(type == null)
+                    {
+                        Console.WriteLine("Invalid command!!!");
+                        continue;
+                    }
+                    Command com = (Command)Activator.CreateInstance(type, command_class, command_args);
+
+                    //q.Commands.Enqueue(com);
+                    q.Add(com);
+                    //commands[command_name].Execute(command_args);
+                }
             }
         }
     }
-    interface Command
+    public abstract class Command
     {
-        void Execute(string[] parameters);
+        public string name;
+        public string[] parameters;
+        public abstract void Execute();
+    }
+
+    //class Test
+    //{
+    //    public Test(string name, string[] parameters) { Console.WriteLine($"SUCCESS {name}, {parameters.Length}!!!"); }
+    //}
+
+    class Queue : Command
+    {
+        string name;
+        string[] parameters;
+
+        public Queue(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+        void List()
+        {
+            foreach (Command com in CommandMain.q)
+                Console.WriteLine(com);
+        }
+
+        void Export()
+        {
+            string file_name = parameters[2], 
+                file_path = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName}\\{file_name}", 
+                format = "XML";
+            //string file_name = parameters[2], file_path = $"{Directory.GetCurrentDirectory()}\\{file_name}", format = "XML";
+            //string file_name = parameters[1], file_path = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}{file_name}", format = "XML";
+            if (parameters.Length >= 4) format = parameters[3];
+
+            //using (StreamWriter writer = new StreamWriter(file_path))
+
+            if (format == "XML")
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Command>), new[] { typeof(Proj1.List), typeof(Find), typeof(Add) });
+                //XmlSerializer serializer = new XmlSerializer(typeof(List<Command>));
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    IndentChars = "  ",
+                    //QuoteChar = '\''
+                    //NewLineChars = Environment.NewLine,
+                    //ConformanceLevel = ConformanceLevel.Auto
+                };
+
+                using (var fileStream = new FileStream(file_path, FileMode.Create))
+                using (var xmlWriter = XmlWriter.Create(fileStream, settings))
+                {
+                    serializer.Serialize(xmlWriter, CommandMain.q);
+                }
+
+                //using (XmlWriter writer = XmlWriter.Create(file_path, settings))
+                //{
+
+                //    //foreach (Command com in CommandMain.q.Commands)
+                //    //{
+                //    //    //BinaryFormatter formatter = new BinaryFormatter();
+                //    //    //formatter.Serialize(fileStream, com);
+                //    //    //XmlSerializer serializer = new XmlSerializer(System.Type.GetType(com.name));
+                //    //    //XmlSerializer serializer = new XmlSerializer(typeof(Proj1.List));
+                //    //    XmlSerializer serializer = new XmlSerializer(com.GetType());
+                //    //    serializer.Serialize(writer, com);
+                //    //}
+                //}
+                ////XmlSerializer serializer = new XmlSerializer(CommandMain.q.GetType());
+                //XmlSerializer serializer = new XmlSerializer(typeof(System.Collections.Generic.List<object>));
+
+                //using (TextWriter writer = new StreamWriter(file_path))
+                //{
+                //    //serializer.Serialize(writer, CommandMain.q.ToArray());
+                //    serializer.Serialize(writer, CommandMain.q);
+                //}
+            }
+            else if(format == "plaintext")
+            {
+                using (StreamWriter writer = new StreamWriter(file_path))
+                {
+                    foreach (Command com in CommandMain.q)
+                        writer.WriteLine(com);
+                }
+            }
+        }
+        public override void Execute()
+        {
+            if(parameters == null || parameters.Length < 2)
+            {
+                Console.WriteLine("No argument provided for queue!!!");
+                return;
+            }
+            if (parameters[1] == "print")
+                List();
+            else if (parameters[1] == "export")
+                Export();
+            else
+                Console.WriteLine("Invalid argument provided for queue!!!");
+        }
     }
 
     class Exit : Command
     {
-        public void Execute(string[] parameters)
+        public Exit(string name, string[] parameters) { }
+        public override void Execute()
         {
             Environment.Exit(0);
         }
     }
 
-    class List : Command
+    //[Serializable]
+    public class List : Command
     {
-        public void Execute(string[] parameters)
+        public string name;
+        public string[] parameters;
+
+        public List() { }
+        public List(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            //sb.Append(name);
+            //foreach (string param in parameters) 
+            //    sb.AppendJoin(' ', param);
+            sb.AppendJoin(" ", parameters);
+            return sb.ToString();
+        }
+        public override void Execute()
         {
             string requested_type = parameters[1];
             if(!CommandMain.fields.ContainsKey(requested_type))
@@ -162,8 +326,24 @@ namespace Proj1
         }
     }
 
-    class Find : Command
+    public class Find : Command
     {
+        public string name;
+        public string[] parameters;
+
+        public Find() { }
+        public Find(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendJoin(" ", parameters);
+            return sb.ToString();
+        }
         (bool, string field, char cmp, string value) parse_requirement(string requirement)
         {
             int cnt = requirement.Count((char c) => (c == '=' || c == '<' || c == '>'));
@@ -194,7 +374,7 @@ namespace Proj1
                 return (true, strings[0], '>', strings[1]);
             }
         }
-        public void Execute(string[] parameters)
+        public override void Execute()
         {
             string requested_type = parameters[1];
 
@@ -286,8 +466,24 @@ namespace Proj1
         }
     }
 
-    class Add : Command
+    public class Add : Command
     {
+        public string name;
+        public string[] parameters;
+
+        public Add() { }
+        public Add(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendJoin(" ", parameters);
+            return sb.ToString();
+        }
         private Dictionary<string, object> BaseBuilder(string type)
         {
             Dictionary<string, object> field_values = new Dictionary<string, object>();
@@ -300,57 +496,6 @@ namespace Proj1
             }
             return field_values;
         }
-
-        //private Dictionary<string, object> AuthorBaseBuilder()
-        //{
-        //    Dictionary<string, object> field_values = new Dictionary<string, object>();
-        //    foreach (var field in CommandMain.fields["episode"])
-        //    {
-        //        if (field == "birthYear")
-        //            field_values.Add(field, 0);
-        //        else
-        //            field_values.Add(field, "");
-        //    }
-        //    return field_values;
-        //}
-        //private Dictionary<string, object> EpisodeBaseBuilder()
-        //{
-        //    Dictionary<string, object> field_values = new Dictionary<string, object>();
-        //    foreach (var field in CommandMain.fields["episode"])
-        //    {
-        //        if (field == "duration" || field == "releaseYear")
-        //            field_values.Add(field, 0);
-        //        else
-        //            field_values.Add(field, "");
-        //    }
-        //    return field_values;
-        //}
-        //private Dictionary<string, object> SeriesBaseBuilder()
-        //{
-        //    Dictionary<string, object> field_values = new Dictionary<string, object>();
-        //    foreach (var field in CommandMain.fields["series"])
-        //    {
-        //        field_values.Add(field, "");
-        //    }
-        //    return field_values;
-        //}
-        //private Dictionary<string, object> MovierBaseBuilder()
-        //{
-        //    Dictionary<string, object> field_values = new Dictionary<string, object>();
-        //    //field_values.Add("title", "No Title");
-        //    //field_values.Add("genre", "no genre");
-        //    //field_values.Add("duration", 0);
-        //    //field_values.Add("releaseYear", 0);
-        //    foreach(var field in CommandMain.fields["movie"])
-        //    {
-        //        if (field == "duration" || field == "releaseYear")
-        //            field_values.Add(field, 0);
-        //        else
-        //            field_values.Add(field, "");
-        //    }
-        //    return field_values;
-        //}
-
         private static void AddToCollection(string type, string repr, Dictionary<string, object> field_values)
         {
             if(type == "author")
@@ -390,7 +535,7 @@ namespace Proj1
                     (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "secondary"));
             }
         }
-        public void Execute(string[] parameters)
+        public override void Execute()
         {
             if(parameters.Length < 3)
             {
