@@ -1,4 +1,3 @@
 list movie
-add episode secondary
-find author name>P awards=0
+find author awards>0 name>K
 list author

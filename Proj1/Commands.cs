@@ -179,6 +179,175 @@ namespace Proj1
     //    public Test(string name, string[] parameters) { Console.WriteLine($"SUCCESS {name}, {parameters.Length}!!!"); }
     //}
 
+    public class Delete : Command
+    {
+        public string name;
+        public string[] parameters;
+
+        public Delete() { }
+        public Delete(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendJoin(" ", parameters);
+            return sb.ToString();
+        }
+        (bool, string field, char cmp, string value) parse_requirement(string requirement)
+        {
+            int cnt = requirement.Count((char c) => (c == '=' || c == '<' || c == '>'));
+            if (cnt == 0)
+            {
+                Console.WriteLine("A requirment should feature a comparison operator!!!");
+                return (false, "", '!', "");
+            }
+            else if (cnt > 1)
+            {
+                Console.WriteLine("A requirment shouldn't feature more than one comparison operators!!!");
+                return (false, "", '!', "");
+            }
+
+            if (requirement.Contains('='))
+            {
+                string[] strings = requirement.Split('=');
+                return (true, strings[0], '=', strings[1]);
+            }
+            if (requirement.Contains('<'))
+            {
+                string[] strings = requirement.Split('<');
+                return (true, strings[0], '<', strings[1]);
+            }
+            else
+            {
+                string[] strings = requirement.Split('>');
+                return (true, strings[0], '>', strings[1]);
+            }
+        }
+
+        public List<(object ob, string type, string representation)> find()
+        {
+            List<(object ob, string type, string representation)> list = new List<(object ob, string type, string representation)>();
+
+            string requested_type = parameters[1];
+
+            //Console.WriteLine($"-------------------------------------------------");
+            //Console.WriteLine($"Executing {String.Join(' ', parameters)}");
+
+            bool br = false;
+            Algorithms.ForEach(CommandMain.col.GetForwardIterator(),
+                ((object ob, string type, string representation) a) =>
+                {
+                    if (br)
+                        return;
+                    if (a.type == requested_type)
+                    {
+                        for (int i = 2; i < parameters.Length; i++)
+                        {
+                            (bool success, string field, char cmp, string value) = parse_requirement(parameters[i]);
+                            if (!success)
+                            {
+                                br = true;
+                                return;
+                            }
+
+                            //if(!a.ob.get_field_values().ContainsKey(field))
+                            //{
+                            //    Console.WriteLine("Invalid field name!!!");
+                            //    return;
+                            //}
+
+                            if (!CommandMain.fields[a.type].Contains(field))
+                            {
+                                Console.WriteLine("Invalid field name!!!");
+                                br = true;
+                                return;
+                            }
+
+                            //a.ob = (R0.Type) a.ob;
+                            //R0.Type type = a.representation == "base" ? (R0.Type)a.ob : new R4.Author4Adapter((R4.Author4)a.ob);
+                            R0.Type type = a.representation == "base" ? (R0.Type)a.ob : new R4.Adapter(a.type, a.ob);
+
+                            //Dictionary<string, object> field_values = a.ob.get_field_values();
+                            Dictionary<string, object> field_values = type.get_field_values();
+
+                            if (field == "duration" || field == "releaseYear" || field == "birthYear" || field == "awards")
+                            {
+                                if (int.TryParse(value, out int n))
+                                {
+                                    if (cmp == '=' && !((int)field_values[field] == n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        list.Add(a);
+                                        return;
+                                    }
+                                    if (cmp == '<' && !((int)field_values[field] < n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        list.Add(a);
+                                        return;
+                                    }
+                                    if (cmp == '>' && !((int)field_values[field] > n))
+                                    {
+                                        //Console.WriteLine($"Requirement {i} not met!!!");
+                                        list.Add(a);
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("The value should be a valid integer");
+                                }
+                            }
+                            else
+                            {
+                                if (cmp == '=' && !((string)field_values[field] == value))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    list.Add(a);
+                                    return;
+                                }
+                                if (cmp == '<' && !(string.Compare((string)field_values[field], value) == -1))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    list.Add(a);
+                                    return;
+                                }
+                                if (cmp == '>' && !(string.Compare((string)field_values[field], value) == 1))
+                                {
+                                    //Console.WriteLine($"Requirement {i} not met!!!");
+                                    list.Add(a);
+                                    return;
+                                }
+                            }
+                        }
+                        R0.Type ob = a.representation == "base" ? (R0.Type)a.ob : new R4.Adapter(a.type, a.ob);
+                        //Console.WriteLine(ob);
+                        //list.Add(ob);
+                    }
+                });
+            return list;
+        }
+
+        public override void Execute()
+        {
+            string requested_type = parameters[1];
+
+            Console.WriteLine($"-------------------------------------------------");
+            Console.WriteLine($"Executing {String.Join(' ', parameters)}");
+
+            List<(object ob, string type, string representation)> list = find();
+
+            CommandMain.col = new MyVector<(object, string, string)>();
+
+            foreach(var el in list)
+               CommandMain.col.Add(el);
+        }
+    }
+
     class Queue : Command
     {
         string name;
@@ -525,6 +694,163 @@ namespace Proj1
                         Console.WriteLine(ob);
                     }
                 });
+        }
+    }
+
+    public class Edit : Command
+    {
+        public string name;
+        public string[] parameters;
+
+        public Edit() { }
+        public Edit(string name, string[] parameters)
+        {
+            this.name = name;
+            this.parameters = parameters;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendJoin(" ", parameters);
+            return sb.ToString();
+        }
+        private Dictionary<string, object> BaseBuilder(string type)
+        {
+            Dictionary<string, object> field_values = new Dictionary<string, object>();
+            foreach (var field in CommandMain.fields[type])
+            {
+                if (field == "duration" || field == "releaseYear" || field == "birthYear" || field == "awards")
+                    field_values.Add(field, 0);
+                else
+                    field_values.Add(field, "");
+            }
+            return field_values;
+        }
+        private static void AddToCollection(string type, string repr, Dictionary<string, object> field_values)
+        {
+            if (type == "author")
+            {
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Author0((string)field_values["name"], (string)field_values["surname"],
+                    (int)field_values["birthYear"], (int)field_values["awards"]), "author", "base"));
+                else
+                    CommandMain.col.Add((new R4.Author4((string)field_values["name"], (string)field_values["surname"],
+                        (int)field_values["birthYear"], (int)field_values["awards"]), "author", "secondary"));
+            }
+            else if (type == "episode")
+            {
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Episode0((string)field_values["title"], (int)field_values["duration"],
+                    (int)field_values["releaseYear"], R0.fc), "episode", "base"));
+                else
+                    CommandMain.col.Add((new R4.Episode4((string)field_values["title"], (int)field_values["duration"],
+                    (int)field_values["releaseYear"], -1), "episode", "secondary"));
+            }
+            else if (type == "series")
+            {
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Series0((string)field_values["title"], (string)field_values["genre"],
+                    R0.fc, new List<Episode0>()), "series", "base"));
+                else
+                    CommandMain.col.Add((new R4.Series4((string)field_values["title"], (string)field_values["genre"],
+                    -1, new List<int>()), "series", "secondary"));
+            }
+            else if (type == "movie")
+            {
+                if (repr == "base")
+                    CommandMain.col.Add((new R0.Movie0((string)field_values["title"], (string)field_values["genre"], R0.fc,
+                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "base"));
+                else
+                    CommandMain.col.Add((new R4.Movie4((string)field_values["title"], (string)field_values["genre"], -1,
+                    (int)field_values["duration"], (int)field_values["releaseYear"]), "movie", "secondary"));
+            }
+        }
+        public override void Execute()
+        {
+            Console.WriteLine($"-------------------------------------------------");
+            Console.WriteLine($"Executing {String.Join(' ', parameters)}");
+
+            if (parameters.Length < 3)
+            {
+                Console.WriteLine("Provide more parameters!!!");
+                return;
+            }
+            string type = parameters[1], repr = parameters[2];
+
+            if (!CommandMain.fields.ContainsKey(type))
+            {
+                Console.WriteLine("This is not a valid type!!!");
+                return;
+            }
+
+            if (repr != "base" && repr != "secondary")
+            {
+                Console.WriteLine("Correct value of the 3rd parameter is base OR secondary");
+                return;
+            }
+
+            Console.Write("Available fields: [ ");
+            foreach (string field1 in CommandMain.fields[type])
+            {
+                Console.Write(field1);
+                Console.Write(" ");
+            }
+            Console.Write("]\n");
+
+            Dictionary<string, object> field_values = BaseBuilder(type);
+
+            string line, field, value;
+
+            while (true)
+            {
+                line = Console.ReadLine();
+                string[] pom = line.Split('=');
+                field = pom[0];
+                if (field == "DONE")
+                {
+                    AddToCollection(type, repr, field_values);
+                    Console.WriteLine();
+                    return;
+                }
+                else if (field == "EXIT")
+                {
+                    Console.WriteLine();
+                    return;
+                }
+                else if (pom.Length != 2)
+                {
+                    Console.WriteLine("No = sign or too many = signs");
+                    continue;
+                }
+                else if (!CommandMain.fields[type].Contains(field))
+                {
+                    Console.WriteLine("Invalid field name!!!");
+                    continue;
+                }
+                else
+                {
+                    value = pom[1];
+
+                    if (field == "duration" || field == "releaseYear" || field == "birthYear" || field == "awards")
+                    {
+                        if (int.TryParse(value, out int n))
+                        {
+                            field_values[field] = n;
+                        }
+                        else
+                        {
+                            Console.WriteLine("The value should be a valid integer");
+                        }
+                    }
+                    else
+                    {
+                        field_values[field] = value;
+                    }
+                }
+            }
+
+            //field_values.ToArray();
         }
     }
 

@@ -12,7 +12,15 @@
     <parameters>
       <string>find</string>
       <string>author</string>
-      <string>awards&gt;10</string>
+      <string>awards&gt;0</string>
+      <string>name&gt;K</string>
+    </parameters>
+  </Command>
+  <Command xsi:type="List">
+    <name>Proj1.List</name>
+    <parameters>
+      <string>list</string>
+      <string>author</string>
     </parameters>
   </Command>
 </ArrayOfCommand>
