@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
 using static Proj1.R0;
+using System.Reflection;
 
 namespace Proj1
 {
@@ -188,34 +189,27 @@ namespace Proj1
             this.name = name;
             this.parameters = parameters;
         }
-        void List()
+        void list()
         {
             foreach (Command com in CommandMain.q)
                 Console.WriteLine(com);
         }
 
-        void Export()
+        void export()
         {
             string file_name = parameters[2], 
                 file_path = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName}\\{file_name}", 
                 format = "XML";
-            //string file_name = parameters[2], file_path = $"{Directory.GetCurrentDirectory()}\\{file_name}", format = "XML";
-            //string file_name = parameters[1], file_path = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}{file_name}", format = "XML";
-            if (parameters.Length >= 4) format = parameters[3];
 
-            //using (StreamWriter writer = new StreamWriter(file_path))
+            if (parameters.Length >= 4) format = parameters[3];
 
             if (format == "XML")
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Command>), new[] { typeof(Proj1.List), typeof(Find), typeof(Add) });
-                //XmlSerializer serializer = new XmlSerializer(typeof(List<Command>));
                 XmlWriterSettings settings = new XmlWriterSettings
                 {
                     Indent = true,
                     IndentChars = "  ",
-                    //QuoteChar = '\''
-                    //NewLineChars = Environment.NewLine,
-                    //ConformanceLevel = ConformanceLevel.Auto
                 };
 
                 using (var fileStream = new FileStream(file_path, FileMode.Create))
@@ -223,28 +217,6 @@ namespace Proj1
                 {
                     serializer.Serialize(xmlWriter, CommandMain.q);
                 }
-
-                //using (XmlWriter writer = XmlWriter.Create(file_path, settings))
-                //{
-
-                //    //foreach (Command com in CommandMain.q.Commands)
-                //    //{
-                //    //    //BinaryFormatter formatter = new BinaryFormatter();
-                //    //    //formatter.Serialize(fileStream, com);
-                //    //    //XmlSerializer serializer = new XmlSerializer(System.Type.GetType(com.name));
-                //    //    //XmlSerializer serializer = new XmlSerializer(typeof(Proj1.List));
-                //    //    XmlSerializer serializer = new XmlSerializer(com.GetType());
-                //    //    serializer.Serialize(writer, com);
-                //    //}
-                //}
-                ////XmlSerializer serializer = new XmlSerializer(CommandMain.q.GetType());
-                //XmlSerializer serializer = new XmlSerializer(typeof(System.Collections.Generic.List<object>));
-
-                //using (TextWriter writer = new StreamWriter(file_path))
-                //{
-                //    //serializer.Serialize(writer, CommandMain.q.ToArray());
-                //    serializer.Serialize(writer, CommandMain.q);
-                //}
             }
             else if(format == "plaintext")
             {
@@ -255,6 +227,78 @@ namespace Proj1
                 }
             }
         }
+
+        void commit()
+        {
+            foreach(var command in CommandMain.q)
+            {
+                command.Execute();
+            }
+        }
+
+        void dismiss()
+        {
+            CommandMain.q = new List<Command>();
+        }
+
+        void load()
+        {
+            string file_name = parameters[2],
+                file_path = $"{Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName}\\{file_name}",
+                format = Path.GetExtension(file_path);
+
+            if (format == ".xml")
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Command>), new[] { typeof(Proj1.List), typeof(Find), typeof(Add) });
+
+                List<Command> new_q;
+
+                using (var fileStream = new FileStream(file_path, FileMode.Open))
+                {
+                    new_q = (List<Command>)serializer.Deserialize(fileStream);
+                }
+
+                CommandMain.q.AddRange(new_q);
+            }
+            else if (format == ".txt")
+            {
+                List<Command> new_q = new List<Command>();
+
+                string[] lines = File.ReadAllLines(file_path);
+
+                foreach (string line in lines)
+                {
+                    string[] parts = line.Split(' ');
+
+                    if (parts.Length == 0)
+                        continue;
+
+                    string commandType = "Proj1." + Char.ToUpper(parts[0][0]) + parts[0].Substring(1);
+
+                    //System.Type type = Assembly.GetExecutingAssembly().GetTypes().FirstOrDefault(t => t.Name.ToLower() == commandType);
+                    System.Type type = Assembly.GetExecutingAssembly().GetType(commandType);
+
+                    //if (type == null || !typeof(Command).IsAssignableFrom(type))
+                    if (type == null)
+                    {
+                        Console.WriteLine($"Unknown command: {line} !!!");
+                        Console.WriteLine($"Exiting load.");
+                        return;
+                    }
+
+                    //object[] constructorArgs = parts.Skip(1).Select(p => (object)p).ToArray();
+                    Command command = (Command)Activator.CreateInstance(type, commandType, parts);
+                    new_q.Add(command);
+                }
+
+                CommandMain.q.AddRange(new_q);
+            }
+            else
+            {
+                Console.WriteLine("Wrong file extension!!!");
+            }
+
+        }
         public override void Execute()
         {
             if(parameters == null || parameters.Length < 2)
@@ -262,12 +306,24 @@ namespace Proj1
                 Console.WriteLine("No argument provided for queue!!!");
                 return;
             }
-            if (parameters[1] == "print")
-                List();
-            else if (parameters[1] == "export")
-                Export();
-            else
-                Console.WriteLine("Invalid argument provided for queue!!!");
+            
+            System.Type thisType = this.GetType();
+            MethodInfo theMethod = thisType.GetMethod(parameters[1], BindingFlags.NonPublic | BindingFlags.Instance);
+            //MethodInfo theMethod = thisType.GetMethod(parameters[1]);
+
+            if (theMethod == null)
+            {
+                Console.WriteLine("Wrong parameter for queue!!!");
+                return;
+            }
+            theMethod.Invoke(this, null);
+
+            //if (parameters[1] == "print")
+            //    List();
+            //else if (parameters[1] == "export")
+            //    Export();
+            //else
+            //    Console.WriteLine("Invalid argument provided for queue!!!");
         }
     }
 
@@ -310,6 +366,9 @@ namespace Proj1
                 Console.WriteLine("Invalid type name!!!");
                 return;
             }
+
+            Console.WriteLine($"-------------------------------------------------");
+            Console.WriteLine($"Executing {String.Join(' ', parameters)}");
 
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(), 
                 ((object ob, string type, string representation) a) => 
@@ -377,6 +436,9 @@ namespace Proj1
         public override void Execute()
         {
             string requested_type = parameters[1];
+
+            Console.WriteLine($"-------------------------------------------------");
+            Console.WriteLine($"Executing {String.Join(' ', parameters)}");
 
             bool br = false;
             Algorithms.ForEach(CommandMain.col.GetForwardIterator(),
@@ -537,7 +599,10 @@ namespace Proj1
         }
         public override void Execute()
         {
-            if(parameters.Length < 3)
+            Console.WriteLine($"-------------------------------------------------");
+            Console.WriteLine($"Executing {String.Join(' ', parameters)}");
+
+            if (parameters.Length < 3)
             {
                 Console.WriteLine("Provide more parameters!!!");
                 return;

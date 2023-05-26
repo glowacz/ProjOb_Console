@@ -7,28 +7,12 @@
       <string>movie</string>
     </parameters>
   </Command>
-  <Command xsi:type="Add">
-    <name>Proj1.Add</name>
-    <parameters>
-      <string>add</string>
-      <string>episode</string>
-      <string>secondary</string>
-    </parameters>
-  </Command>
   <Command xsi:type="Find">
     <name>Proj1.Find</name>
     <parameters>
       <string>find</string>
       <string>author</string>
-      <string>name&gt;P</string>
-      <string>awards=0</string>
-    </parameters>
-  </Command>
-  <Command xsi:type="List">
-    <name>Proj1.List</name>
-    <parameters>
-      <string>list</string>
-      <string>author</string>
+      <string>awards&gt;10</string>
     </parameters>
   </Command>
 </ArrayOfCommand>
