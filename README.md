@@ -1,15 +1,17 @@
 # ProjOb_Console
 
-Konsola użytkownika. Pozwala użytkownikowi na dodawanie, edytowanie, usuwanie i wypisywanie obiektów typu Author, Episode, Series i Movie. 
-Obiekty są ze sobą powiązane: każy Episode, Series i Movie mają przypisanego swojego Authora, a każde Series ma przypisanych wiele Episode.
-Polecenia są dodawane do kolejki, którą można wypisać, wyeksportować do pliku, wykonać lub usunąć.
-Domyślnie w mainie są wywołane polecenia R0.Create(), R4.Create() i CommandMain.Init() wypełniające kolekcję przykładowymi obiektami, więc można od razu wykonywać polecenia typu list/find.
+User Console
 
-Dodatkowo projekt zawiera zaimplementowane przeze mnie kolekcje wektor, listę łączoną i drzewo binarne umożliwiające: 
-dodawanie, usuwanie i uzyskanie iteratora w przód lub w tył. 
-Wszystkie te kolekcje implementują ten sam interfejs, dla którego napisałem algorytmy: Find, Print, ForEach i CountIf.
+It allows the user to add, edit, delete, and list objects of type Author, Episode, Series, and Movie.
+The objects are interconnected: every Episode, Series, and Movie has an assigned Author, and each Series has multiple Episodes assigned.
+Commands are added to a queue, which can be listed, exported to a file, executed, or deleted.
+By default, in the main function, R0.Create(), R4.Create(), and CommandMain.Init() are called to populate the collection with example objects, allowing immediate execution of list/find commands.
 
-Konsola obsługuje następujące polecenia (treść przygotowana przez prowadzących przedmiot):
+Additionally, the project includes custom-implemented collections: vector, linked list, and binary tree, enabling:
+adding, deleting, and obtaining a forward or backward iterator.
+All these collections implement the same interface, for which I developed the following algorithms: Find, Print, ForEach, and CountIf.
+
+The console supports the following commands (content prepared by the course instructors):
 
 **1. list** - prints all objects of a particular type
 
